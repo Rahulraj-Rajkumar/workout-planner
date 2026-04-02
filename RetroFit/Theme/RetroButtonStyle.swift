@@ -7,23 +7,33 @@ struct RetroButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(RetroTheme.bodyFont)
-            .foregroundStyle(filled ? RetroTheme.cream : color)
+            .foregroundStyle(filled ? RetroTheme.paperBase : color)
             .padding(.horizontal, 14)
-            .padding(.vertical, 8)
+            .padding(.vertical, 10)
             .background(
-                filled ? color : RetroTheme.parchment,
-                in: RoundedRectangle(cornerRadius: RetroTheme.cornerRadius)
+                RoundedRectangle(cornerRadius: RetroTheme.cornerRadius, style: .continuous)
+                    .fill(
+                        filled
+                            ? AnyShapeStyle(
+                                LinearGradient(
+                                    colors: [color.opacity(0.96), color.opacity(0.80)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            : AnyShapeStyle(RetroTheme.cardGradient)
+                    )
             )
             .overlay(
-                RoundedRectangle(cornerRadius: RetroTheme.cornerRadius)
+                RoundedRectangle(cornerRadius: RetroTheme.cornerRadius, style: .continuous)
                     .strokeBorder(color, lineWidth: RetroTheme.borderWidth)
             )
             .offset(y: configuration.isPressed ? 1 : 0)
             .shadow(
-                color: color.opacity(0.3),
-                radius: 0,
-                x: configuration.isPressed ? 0 : 1,
-                y: configuration.isPressed ? 0 : 2
+                color: color.opacity(filled ? 0.24 : 0.12),
+                radius: configuration.isPressed ? 3 : 9,
+                x: 0,
+                y: configuration.isPressed ? 2 : 6
             )
     }
 }
@@ -36,15 +46,21 @@ struct RetroSmallButtonStyle: ButtonStyle {
             .font(RetroTheme.captionFont)
             .foregroundStyle(color)
             .padding(.horizontal, 10)
-            .padding(.vertical, 5)
+            .padding(.vertical, 7)
             .background(
-                RetroTheme.cream,
-                in: RoundedRectangle(cornerRadius: RetroTheme.cornerRadius)
+                RoundedRectangle(cornerRadius: RetroTheme.cornerRadius, style: .continuous)
+                    .fill(RetroTheme.cardGradient)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: RetroTheme.cornerRadius)
+                RoundedRectangle(cornerRadius: RetroTheme.cornerRadius, style: .continuous)
                     .strokeBorder(color.opacity(0.5), lineWidth: RetroTheme.thinBorder)
             )
-            .opacity(configuration.isPressed ? 0.7 : 1.0)
+            .shadow(
+                color: RetroTheme.shadowBrown.opacity(configuration.isPressed ? 0.04 : 0.10),
+                radius: 5,
+                x: 0,
+                y: 3
+            )
+            .opacity(configuration.isPressed ? 0.8 : 1.0)
     }
 }

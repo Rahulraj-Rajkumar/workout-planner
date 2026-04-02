@@ -6,6 +6,7 @@ final class Exercise {
     var name: String
     var sectionRaw: Int
     var sortOrder: Int
+    var modeRaw: String?
 
     // Strength fields
     var sets: Int?
@@ -32,9 +33,29 @@ final class Exercise {
         set { intensityRaw = newValue?.rawValue }
     }
 
+    var mode: WorkoutMode {
+        get {
+            if let modeRaw, let storedMode = WorkoutMode(rawValue: modeRaw) {
+                return storedMode
+            }
+
+            if distanceKm != nil || intensityRaw != nil {
+                return .cardio
+            }
+
+            if durationMinutes != nil {
+                return section == .main ? .cardio : .mobility
+            }
+
+            return .strength
+        }
+        set { modeRaw = newValue.rawValue }
+    }
+
     init(
         name: String,
         section: ExerciseSection,
+        mode: WorkoutMode? = nil,
         sortOrder: Int = 0,
         sets: Int? = nil,
         reps: Int? = nil,
@@ -46,6 +67,7 @@ final class Exercise {
         self.name = name
         self.sectionRaw = section.rawValue
         self.sortOrder = sortOrder
+        self.modeRaw = mode?.rawValue
         self.sets = sets
         self.reps = reps
         self.weight = weight

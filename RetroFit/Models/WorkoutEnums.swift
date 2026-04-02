@@ -51,6 +51,39 @@ enum DayOfWeek: Int, Codable, CaseIterable, Identifiable {
 enum WorkoutMode: String, Codable, CaseIterable {
     case strength = "Strength"
     case cardio = "Cardio"
+    case mobility = "Mobility"
+
+    var systemIcon: String {
+        switch self {
+        case .strength: return "dumbbell.fill"
+        case .cardio: return "figure.run"
+        case .mobility: return "figure.cooldown"
+        }
+    }
+
+    var shortLabel: String {
+        switch self {
+        case .strength: return "Lift"
+        case .cardio: return "Cardio"
+        case .mobility: return "Stretch"
+        }
+    }
+
+    var pickerLabel: String {
+        switch self {
+        case .strength: return "Lift"
+        case .cardio: return "Cardio"
+        case .mobility: return "Stretch"
+        }
+    }
+
+    var statsLabel: String {
+        switch self {
+        case .strength: return "Lift"
+        case .cardio: return "Card"
+        case .mobility: return "Mob"
+        }
+    }
 }
 
 enum ExerciseSection: Int, Codable, CaseIterable, Identifiable {

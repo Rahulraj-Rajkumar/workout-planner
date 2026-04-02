@@ -54,11 +54,14 @@ struct SectionView: View {
                 EmptyStateView(section: section)
             } else {
                 ForEach(exercises) { exercise in
-                    ExerciseRowView(
-                        exercise: exercise,
-                        mode: mode,
-                        onDelete: { onDelete(exercise) }
-                    )
+                    ExerciseRowView(exercise: exercise, isArranging: false)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                onDelete(exercise)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                 }
             }
 
@@ -85,7 +88,9 @@ struct SectionView: View {
         )
         .shadow(color: RetroTheme.borderBrown.opacity(0.1), radius: 0, x: 1, y: 2)
         .sheet(isPresented: $showingAddSheet) {
-            AddExerciseSheet(section: section, onAdd: onAdd)
+            AddExerciseSheet(section: section, defaultMode: mode) { name, _ in
+                onAdd(name)
+            }
         }
     }
 }

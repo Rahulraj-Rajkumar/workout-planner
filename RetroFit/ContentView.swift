@@ -2,126 +2,123 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var workoutDays: [WorkoutDay]
+    @Query(sort: \WorkoutDay.dayOfWeekRaw) private var workoutDays: [WorkoutDay]
     @State private var selectedDay: DayOfWeek = currentDayOfWeek()
 
+    private var selectedWorkoutDay: WorkoutDay? {
+        workoutDays.first { $0.dayOfWeek == selectedDay }
+    }
+
     var body: some View {
-        VStack(spacing: 0) {
-            // App header
-            appHeader()
+        ZStack {
+            RetroBackground()
+                .ignoresSafeArea()
 
-            // Retro divider
-            Rectangle()
-                .fill(RetroTheme.borderBrown)
-                .frame(height: 2)
+            VStack(spacing: 0) {
+                appHeader()
+                    .padding(.horizontal, 14)
+                    .padding(.top, 10)
 
-            // Week day picker
-            WeekView(selectedDay: $selectedDay, workoutDays: workoutDays)
+                WeekView(selectedDay: $selectedDay, workoutDays: workoutDays)
+                    .padding(.top, 8)
 
-            // Thin divider
-            Rectangle()
-                .fill(RetroTheme.borderLight)
-                .frame(height: 1)
-                .padding(.horizontal, 16)
-
-            // Day detail
-            let dayData = workoutDays.first { $0.dayOfWeek == selectedDay }
-            if let day = dayData {
-                DayDetailView(workoutDay: day)
-            } else {
-                emptyDayView()
+                if let day = selectedWorkoutDay {
+                    DayDetailView(workoutDay: day)
+                } else {
+                    emptyDayView()
+                }
             }
-        }
-        .background(RetroTheme.cream)
-        .onAppear { ensureDayExists(selectedDay) }
-        .onChange(of: selectedDay) { _, newDay in
-            ensureDayExists(newDay)
         }
     }
 
     @ViewBuilder
     private func appHeader() -> some View {
-        HStack(spacing: 10) {
-            // Retro Apple-inspired logo
-            VStack(spacing: 1) {
-                ForEach([
-                    RetroTheme.retroGreen,
-                    RetroTheme.retroYellow,
-                    RetroTheme.retroOrange,
-                    RetroTheme.retroRed,
-                    RetroTheme.retroPurple,
-                    RetroTheme.retroBlue
-                ], id: \.self) { color in
-                    Rectangle()
-                        .fill(color)
-                        .frame(width: 16, height: 3)
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 10) {
+                        VStack(spacing: 2) {
+                            ForEach(RetroTheme.rainbowStripeColors, id: \.self) { color in
+                                Rectangle()
+                                    .fill(color)
+                                    .frame(width: 18, height: 3)
+                            }
+                        }
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("RetroFit")
+                                .font(RetroTheme.titleFont)
+                                .foregroundStyle(RetroTheme.inkBlack)
+
+                            Text("Simple weekly workout planning")
+                                .font(RetroTheme.smallFont)
+                                .foregroundStyle(RetroTheme.warmGray)
+                                .tracking(0.8)
+                        }
+                    }
                 }
+
+                Spacer(minLength: 12)
+
+                VStack(alignment: .trailing, spacing: 6) {
+                    Text("v1.1")
+                        .font(RetroTheme.captionFont)
+                        .foregroundStyle(RetroTheme.inkBlack)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .strokeBorder(RetroTheme.borderLight, lineWidth: 1)
+                        )
+
+                    Text(selectedDay.fullName.uppercased())
+                        .font(RetroTheme.smallFont.weight(.bold))
+                        .foregroundStyle(RetroTheme.warmGray)
+                        .tracking(1.4)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+                .frame(width: RetroTheme.appHeaderDayStampWidth, alignment: .trailing)
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
 
-            Text("RetroFit")
-                .font(.system(.title, design: .monospaced))
-                .fontWeight(.bold)
-                .foregroundStyle(RetroTheme.inkBlack)
-
-            Spacer()
-
-            Text("v1.0")
-                .font(RetroTheme.smallFont)
-                .foregroundStyle(RetroTheme.warmGray)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 3)
-                .background(RetroTheme.parchment)
-                .clipShape(RoundedRectangle(cornerRadius: 2))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 2)
-                        .strokeBorder(RetroTheme.borderLight, lineWidth: 1)
-                )
+            Rectangle()
+                .fill(RetroTheme.borderLight.opacity(0.9))
+                .frame(height: 1)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(RetroTheme.parchment)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(RetroTheme.chromeGradient)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(RetroTheme.borderBrown, lineWidth: 1.5)
+        )
+        .shadow(color: RetroTheme.shadowBrown.opacity(0.18), radius: 12, x: 0, y: 8)
     }
 
     @ViewBuilder
     private func emptyDayView() -> some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 14) {
             Spacer()
 
-            Image(systemName: "calendar.badge.plus")
-                .font(.system(size: 40))
+            Image(systemName: "calendar.badge.clock")
+                .font(.system(size: 42, weight: .regular, design: .rounded))
                 .foregroundStyle(RetroTheme.lightGray)
 
-            Text("Setting up \(selectedDay.fullName)...")
+            Text("Loading your week...")
                 .font(RetroTheme.bodyFont)
                 .foregroundStyle(RetroTheme.warmGray)
 
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private func ensureDayExists(_ day: DayOfWeek) {
-        let exists = workoutDays.contains { $0.dayOfWeek == day }
-        if !exists {
-            let newDay = WorkoutDay(dayOfWeek: day)
-            modelContext.insert(newDay)
-            try? modelContext.save()
-        }
+        .padding(.horizontal, 24)
     }
 
     private static func currentDayOfWeek() -> DayOfWeek {
-        let weekday = Calendar.current.component(.weekday, from: Date())
-        // Calendar weekday: 1=Sunday, 2=Monday, ... 7=Saturday
-        switch weekday {
-        case 2: return .monday
-        case 3: return .tuesday
-        case 4: return .wednesday
-        case 5: return .thursday
-        case 6: return .friday
-        case 7: return .saturday
-        case 1: return .sunday
-        default: return .monday
-        }
+        DateHelpers.dayOfWeekFromDate(Date())
     }
 }

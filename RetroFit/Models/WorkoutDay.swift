@@ -3,8 +3,9 @@ import SwiftData
 
 @Model
 final class WorkoutDay {
+    @Attribute(.unique)
     var dayOfWeekRaw: Int
-    var modeRaw: String
+    var defaultModeRaw: String
 
     @Relationship(deleteRule: .cascade, inverse: \Exercise.day)
     var exercises: [Exercise] = []
@@ -14,14 +15,32 @@ final class WorkoutDay {
         set { dayOfWeekRaw = newValue.rawValue }
     }
 
-    var mode: WorkoutMode {
-        get { WorkoutMode(rawValue: modeRaw) ?? .strength }
-        set { modeRaw = newValue.rawValue }
+    var defaultMode: WorkoutMode {
+        get { WorkoutMode(rawValue: defaultModeRaw) ?? .strength }
+        set { defaultModeRaw = newValue.rawValue }
     }
 
-    init(dayOfWeek: DayOfWeek, mode: WorkoutMode = .strength) {
+    var dominantMode: WorkoutMode {
+        guard !exercises.isEmpty else { return defaultMode }
+
+        let counts = Dictionary(grouping: exercises, by: \.mode).mapValues(\.count)
+        let highestCount = counts.values.max() ?? 0
+        let dominantModes = WorkoutMode.allCases.filter { counts[$0, default: 0] == highestCount }
+
+        if dominantModes.count != 1 {
+            return defaultMode
+        }
+
+        return dominantModes[0]
+    }
+
+    var exerciseCount: Int {
+        exercises.count
+    }
+
+    init(dayOfWeek: DayOfWeek, defaultMode: WorkoutMode = .strength) {
         self.dayOfWeekRaw = dayOfWeek.rawValue
-        self.modeRaw = mode.rawValue
+        self.defaultModeRaw = defaultMode.rawValue
     }
 
     func exercises(for section: ExerciseSection) -> [Exercise] {

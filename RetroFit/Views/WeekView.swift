@@ -5,50 +5,63 @@ struct WeekView: View {
     let workoutDays: [WorkoutDay]
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 8) {
             ForEach(DayOfWeek.allCases) { day in
                 let isSelected = selectedDay == day
                 let dayData = workoutDays.first { $0.dayOfWeek == day }
                 let hasExercises = dayData?.hasExercises ?? false
+                let accent = dayData.map { RetroTheme.modeColor($0.dominantMode) } ?? RetroTheme.warmGray
 
                 Button {
                     withAnimation(.easeInOut(duration: 0.15)) {
                         selectedDay = day
                     }
                 } label: {
-                    VStack(spacing: 4) {
-                        Text(day.shortName)
-                            .font(RetroTheme.smallFont)
-                            .fontWeight(isSelected ? .bold : .regular)
+                    VStack(spacing: 6) {
+                        Text(day.shortName.uppercased())
+                            .font(RetroTheme.smallFont.weight(.bold))
+                            .tracking(1)
 
-                        // Activity dot
                         Circle()
-                            .fill(hasExercises
-                                ? (dayData.map { RetroTheme.modeColor($0.mode) } ?? RetroTheme.warmGray)
-                                : Color.clear)
-                            .frame(width: 5, height: 5)
+                            .fill(hasExercises ? accent : RetroTheme.lightGray.opacity(0.25))
+                            .frame(width: 7, height: 7)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .foregroundStyle(isSelected ? RetroTheme.cream : RetroTheme.inkBlack)
+                    .frame(minHeight: 52)
+                    .foregroundStyle(isSelected ? RetroTheme.paperBase : RetroTheme.inkBlack)
                     .background(
-                        isSelected
-                            ? RetroTheme.borderBrown
-                            : RetroTheme.cream
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: RetroTheme.cornerRadius))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: RetroTheme.cornerRadius)
-                            .strokeBorder(
-                                isSelected ? RetroTheme.borderBrown : RetroTheme.borderLight,
-                                lineWidth: isSelected ? RetroTheme.borderWidth : RetroTheme.thinBorder
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(
+                                isSelected
+                                    ? AnyShapeStyle(RetroTheme.selectedDayGradient(accent))
+                                    : AnyShapeStyle(RetroTheme.cardGradient)
                             )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(
+                                isSelected ? accent.opacity(0.7) : RetroTheme.borderLight,
+                                lineWidth: isSelected ? 1.5 : 1
+                            )
+                    )
+                    .shadow(
+                        color: isSelected ? accent.opacity(0.18) : RetroTheme.shadowBrown.opacity(0.08),
+                        radius: 8,
+                        x: 0,
+                        y: 5
                     )
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(day.fullName)
+                .accessibilityValue(
+                    hasExercises
+                        ? "\(dayData?.exerciseCount ?? 0) exercises"
+                        : "No exercises"
+                )
+                .accessibilityHint(isSelected ? "Currently selected" : "Show \(day.fullName)'s plan")
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
     }
 }

@@ -13,13 +13,15 @@ struct RetroCard: ViewModifier {
                 .padding(RetroTheme.cardPadding)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .background(RetroTheme.parchment)
-        .clipShape(RoundedRectangle(cornerRadius: RetroTheme.cornerRadius))
+        .background(
+            RoundedRectangle(cornerRadius: RetroTheme.cornerRadius, style: .continuous)
+                .fill(RetroTheme.cardGradient)
+        )
         .overlay(
-            RoundedRectangle(cornerRadius: RetroTheme.cornerRadius)
+            RoundedRectangle(cornerRadius: RetroTheme.cornerRadius, style: .continuous)
                 .strokeBorder(RetroTheme.borderLight, lineWidth: RetroTheme.thinBorder)
         )
-        .shadow(color: RetroTheme.borderBrown.opacity(0.15), radius: 0, x: 1, y: 2)
+        .shadow(color: RetroTheme.shadowBrown.opacity(0.12), radius: 10, x: 0, y: 6)
     }
 }
 

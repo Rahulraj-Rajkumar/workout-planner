@@ -6,26 +6,17 @@ struct CardioExerciseForm: View {
     var body: some View {
         HStack(spacing: 12) {
             durationField()
-
-            Text("|")
-                .font(RetroTheme.bodyFont)
-                .foregroundStyle(RetroTheme.lightGray)
-
             distanceField()
-
-            Text("|")
-                .font(RetroTheme.bodyFont)
-                .foregroundStyle(RetroTheme.lightGray)
-
             intensityPicker()
         }
     }
 
     private func durationField() -> some View {
         VStack(alignment: .center, spacing: 2) {
-            Text("Min")
-                .font(RetroTheme.smallFont)
+            Text("MIN")
+                .font(RetroTheme.smallFont.weight(.bold))
                 .foregroundStyle(RetroTheme.warmGray)
+                .tracking(1)
 
             TextField("0", value: Binding(
                 get: { exercise.durationMinutes ?? 0 },
@@ -35,23 +26,23 @@ struct CardioExerciseForm: View {
                 .foregroundStyle(RetroTheme.inkBlack)
                 .multilineTextAlignment(.center)
                 .keyboardType(.decimalPad)
-                .frame(width: 44)
-                .padding(.vertical, 4)
-                .background(RetroTheme.cream)
+                .frame(width: 74)
+                .padding(.vertical, 8)
+                .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .overlay(
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundStyle(RetroTheme.borderLight),
-                    alignment: .bottom
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(RetroTheme.borderLight, lineWidth: 1)
                 )
+                .accessibilityLabel("Duration in minutes")
         }
     }
 
     private func distanceField() -> some View {
         VStack(alignment: .center, spacing: 2) {
-            Text("km")
-                .font(RetroTheme.smallFont)
+            Text("KM")
+                .font(RetroTheme.smallFont.weight(.bold))
                 .foregroundStyle(RetroTheme.warmGray)
+                .tracking(1)
 
             TextField("0", value: Binding(
                 get: { exercise.distanceKm ?? 0 },
@@ -61,23 +52,23 @@ struct CardioExerciseForm: View {
                 .foregroundStyle(RetroTheme.inkBlack)
                 .multilineTextAlignment(.center)
                 .keyboardType(.decimalPad)
-                .frame(width: 44)
-                .padding(.vertical, 4)
-                .background(RetroTheme.cream)
+                .frame(width: 74)
+                .padding(.vertical, 8)
+                .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .overlay(
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundStyle(RetroTheme.borderLight),
-                    alignment: .bottom
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(RetroTheme.borderLight, lineWidth: 1)
                 )
+                .accessibilityLabel("Distance in kilometers")
         }
     }
 
     private func intensityPicker() -> some View {
         VStack(alignment: .center, spacing: 2) {
-            Text("Effort")
-                .font(RetroTheme.smallFont)
+            Text("EFFORT")
+                .font(RetroTheme.smallFont.weight(.bold))
                 .foregroundStyle(RetroTheme.warmGray)
+                .tracking(1)
 
             Menu {
                 ForEach(Intensity.allCases) { level in
@@ -87,18 +78,66 @@ struct CardioExerciseForm: View {
                 }
             } label: {
                 Text(exercise.intensity?.rawValue ?? "Set")
-                    .font(RetroTheme.captionFont)
+                    .font(RetroTheme.captionFont.weight(.semibold))
                     .foregroundStyle(RetroTheme.inkBlack)
+                    .frame(minWidth: 84)
                     .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(RetroTheme.cream)
+                    .padding(.vertical, 8)
+                    .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundStyle(RetroTheme.borderLight),
-                        alignment: .bottom
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .strokeBorder(RetroTheme.borderLight, lineWidth: 1)
                     )
             }
+            .accessibilityLabel("Intensity")
+        }
+    }
+}
+
+struct MobilityExerciseForm: View {
+    @Bindable var exercise: Exercise
+
+    var body: some View {
+        HStack(spacing: 12) {
+            durationField()
+
+            Text("Gentle stretch or mobility flow")
+                .font(RetroTheme.captionFont)
+                .foregroundStyle(RetroTheme.warmGray)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(RetroTheme.borderLight, lineWidth: 1)
+                )
+        }
+    }
+
+    private func durationField() -> some View {
+        VStack(alignment: .center, spacing: 2) {
+            Text("MIN")
+                .font(RetroTheme.smallFont.weight(.bold))
+                .foregroundStyle(RetroTheme.warmGray)
+                .tracking(1)
+
+            TextField("0", value: Binding(
+                get: { exercise.durationMinutes ?? 0 },
+                set: { exercise.durationMinutes = $0 }
+            ), format: .number)
+                .font(RetroTheme.bodyFont)
+                .foregroundStyle(RetroTheme.inkBlack)
+                .multilineTextAlignment(.center)
+                .keyboardType(.decimalPad)
+                .frame(width: 74)
+                .padding(.vertical, 8)
+                .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(RetroTheme.borderLight, lineWidth: 1)
+                )
+                .accessibilityLabel("Mobility duration in minutes")
         }
     }
 }

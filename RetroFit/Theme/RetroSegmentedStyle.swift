@@ -4,6 +4,7 @@ struct RetroSegmentedPicker<T: Hashable & CaseIterable & RawRepresentable>: View
     let title: String
     @Binding var selection: T
     var accentColor: (T) -> Color = { _ in RetroTheme.retroGreen }
+    var label: (T) -> String = { $0.rawValue }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -14,22 +15,33 @@ struct RetroSegmentedPicker<T: Hashable & CaseIterable & RawRepresentable>: View
                         selection = option
                     }
                 } label: {
-                    Text(option.rawValue)
+                    Text(label(option))
                         .font(RetroTheme.captionFont)
                         .fontWeight(isSelected ? .bold : .regular)
-                        .foregroundStyle(isSelected ? RetroTheme.cream : RetroTheme.inkBlack)
+                        .foregroundStyle(isSelected ? RetroTheme.paperBase : RetroTheme.inkBlack)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .background(isSelected ? accentColor(option) : Color.clear)
+                        .padding(.vertical, 9)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(
+                                    isSelected
+                                        ? AnyShapeStyle(RetroTheme.selectedDayGradient(accentColor(option)))
+                                        : AnyShapeStyle(Color.clear)
+                                )
+                        )
                 }
                 .buttonStyle(.plain)
             }
         }
-        .background(RetroTheme.cream)
-        .clipShape(RoundedRectangle(cornerRadius: RetroTheme.cornerRadius))
+        .padding(3)
+        .background(
+            RoundedRectangle(cornerRadius: RetroTheme.cornerRadius, style: .continuous)
+                .fill(RetroTheme.insetCream)
+        )
         .overlay(
-            RoundedRectangle(cornerRadius: RetroTheme.cornerRadius)
+            RoundedRectangle(cornerRadius: RetroTheme.cornerRadius, style: .continuous)
                 .strokeBorder(RetroTheme.borderBrown, lineWidth: RetroTheme.borderWidth)
         )
+        .accessibilityLabel(title)
     }
 }
