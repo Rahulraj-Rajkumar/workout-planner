@@ -26,6 +26,7 @@ struct CardioExerciseForm: View {
                 .foregroundStyle(RetroTheme.inkBlack)
                 .multilineTextAlignment(.center)
                 .keyboardType(.decimalPad)
+                .retroKeyboardDoneToolbar()
                 .frame(width: 74)
                 .padding(.vertical, 8)
                 .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
@@ -52,6 +53,7 @@ struct CardioExerciseForm: View {
                 .foregroundStyle(RetroTheme.inkBlack)
                 .multilineTextAlignment(.center)
                 .keyboardType(.decimalPad)
+                .retroKeyboardDoneToolbar()
                 .frame(width: 74)
                 .padding(.vertical, 8)
                 .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
@@ -98,20 +100,9 @@ struct MobilityExerciseForm: View {
     @Bindable var exercise: Exercise
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(alignment: .top, spacing: 12) {
             durationField()
-
-            Text("Gentle stretch or mobility flow")
-                .font(RetroTheme.captionFont)
-                .foregroundStyle(RetroTheme.warmGray)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .strokeBorder(RetroTheme.borderLight, lineWidth: 1)
-                )
+            notesField()
         }
     }
 
@@ -130,6 +121,7 @@ struct MobilityExerciseForm: View {
                 .foregroundStyle(RetroTheme.inkBlack)
                 .multilineTextAlignment(.center)
                 .keyboardType(.decimalPad)
+                .retroKeyboardDoneToolbar()
                 .frame(width: 74)
                 .padding(.vertical, 8)
                 .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
@@ -139,5 +131,37 @@ struct MobilityExerciseForm: View {
                 )
                 .accessibilityLabel("Mobility duration in minutes")
         }
+    }
+
+    private func notesField() -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("NOTES")
+                .font(RetroTheme.smallFont.weight(.bold))
+                .foregroundStyle(RetroTheme.warmGray)
+                .tracking(1)
+
+            TextField(
+                "Optional notes",
+                text: Binding(
+                    get: { exercise.notes ?? "" },
+                    set: { exercise.notes = $0.isEmpty ? nil : $0 }
+                ),
+                axis: .vertical
+            )
+            .font(RetroTheme.captionFont)
+            .foregroundStyle(RetroTheme.inkBlack)
+            .lineLimit(1...2)
+            .submitLabel(.done)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(RetroTheme.insetCream, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(RetroTheme.borderLight, lineWidth: 1)
+            )
+            .accessibilityLabel("Mobility notes")
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

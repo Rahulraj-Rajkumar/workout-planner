@@ -3,6 +3,7 @@ import SwiftUI
 struct ExerciseRowView: View {
     @Bindable var exercise: Exercise
     let isArranging: Bool
+    private let cardShape = RoundedRectangle(cornerRadius: 16, style: .continuous)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -41,13 +42,16 @@ struct ExerciseRowView: View {
         }
         .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            cardShape
                 .fill(RetroTheme.cardGradient)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            cardShape
                 .strokeBorder(RetroTheme.borderLight.opacity(0.9), lineWidth: 1)
         )
+        .clipShape(cardShape)
+        .compositingGroup()
+        .contentShape(.dragPreview, cardShape)
         .opacity(isArranging ? 0.92 : 1)
     }
 

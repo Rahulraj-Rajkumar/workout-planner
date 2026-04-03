@@ -17,6 +17,7 @@ final class Exercise {
     var durationMinutes: Double?
     var distanceKm: Double?
     var intensityRaw: String?
+    var notes: String?
 
     var day: WorkoutDay?
 
@@ -62,7 +63,8 @@ final class Exercise {
         weight: Double? = nil,
         durationMinutes: Double? = nil,
         distanceKm: Double? = nil,
-        intensity: Intensity? = nil
+        intensity: Intensity? = nil,
+        notes: String? = nil
     ) {
         self.name = name
         self.sectionRaw = section.rawValue
@@ -74,5 +76,6 @@ final class Exercise {
         self.durationMinutes = durationMinutes
         self.distanceKm = distanceKm
         self.intensityRaw = intensity?.rawValue
+        self.notes = notes
     }
 }
