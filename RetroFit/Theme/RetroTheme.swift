@@ -1,7 +1,4 @@
 import SwiftUI
-#if canImport(UIKit)
-import UIKit
-#endif
 
 enum RetroTheme {
     // MARK: - Surfaces
@@ -120,33 +117,5 @@ struct RetroBackground: View {
                 .padding(.top, 6)
             }
         }
-    }
-}
-
-private struct RetroKeyboardDoneModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content.toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-
-                Button("Done") {
-                    dismissKeyboard()
-                }
-                .font(RetroTheme.captionFont.weight(.semibold))
-                .foregroundStyle(RetroTheme.inkBlack)
-            }
-        }
-    }
-
-    private func dismissKeyboard() {
-        #if canImport(UIKit)
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        #endif
-    }
-}
-
-extension View {
-    func retroKeyboardDoneToolbar() -> some View {
-        modifier(RetroKeyboardDoneModifier())
     }
 }

@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+#if canImport(UIKit)
+import UIKit
+#endif
 
 struct DayDetailView: View {
     @Bindable var workoutDay: WorkoutDay
@@ -58,6 +61,17 @@ struct DayDetailView: View {
         .background(Color.clear)
         .environment(\.editMode, .constant(isArranging ? .active : .inactive))
         .scrollDismissesKeyboard(.interactively)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+
+                Button("Done") {
+                    dismissKeyboard()
+                }
+                .font(RetroTheme.bodyFont.weight(.semibold))
+                .foregroundStyle(RetroTheme.inkBlack)
+            }
+        }
         .sheet(item: $showingAddSheetForSection) { section in
             AddExerciseSheet(section: section, defaultMode: suggestedMode(for: section)) { name, mode in
                 addExercise(name: name, mode: mode, to: section)
@@ -295,5 +309,11 @@ struct DayDetailView: View {
 
     private func count(for mode: WorkoutMode) -> Int {
         workoutDay.exercises.filter { $0.mode == mode }.count
+    }
+
+    private func dismissKeyboard() {
+        #if canImport(UIKit)
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        #endif
     }
 }
